@@ -21,7 +21,7 @@ const CorrelationIDHeaderKey = "X-Correlation-ID"
 //
 //	mux := http.NewServeMux()
 //	mux.HandleFunc("/v1/hello", HelloHandler)
-//	log.Fatal(http.ListenAndServe(addr, log.HTTPHandler(mux)))
+//	http.ListenAndServe(addr, log.HTTPHandler(mux))
 func HTTPHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		correlationID := r.Header.Get(CorrelationIDHeaderKey)
