@@ -29,6 +29,7 @@ func HTTPHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for i := range ignoredPaths {
 			if strings.Contains(r.URL.Path, ignoredPaths[i]) {
+				handler.ServeHTTP(w, r)
 				return
 			}
 		}
