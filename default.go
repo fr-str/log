@@ -1,6 +1,10 @@
 package log
 
-import "context"
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+)
 
 var DefaultLogger Logger = NewWithConfiguration(Config{
 	pcOffset: 1,
@@ -44,4 +48,13 @@ func WarnCtx(ctx context.Context, msg string, args ...any) {
 
 func ErrorCtx(ctx context.Context, msg string, args ...any) {
 	DefaultLogger.ErrorCtx(ctx, msg, args...)
+}
+
+func PrintJSON(v any) {
+	b, err := json.MarshalIndent(v, "", " ")
+	if err != nil {
+		Error("------ PrintJSON -----", Err(err))
+		return
+	}
+	fmt.Println(string(b))
 }
