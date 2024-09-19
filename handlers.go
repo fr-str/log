@@ -51,6 +51,7 @@ func HTTPHandler(handler http.Handler) http.Handler {
 			Duration("duration", time.Since(ts)),
 			String("remote", remoteAddr),
 			String("agent", r.UserAgent()),
+			String("query", r.URL.Query().Encode()),
 		)
 	})
 }
