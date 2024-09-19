@@ -7,11 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fr-str/env"
 	"github.com/google/uuid"
 )
 
 // CorrelationIDHeaderKey is the HTTP header key used for transmitting correlation IDs.
 const CorrelationIDHeaderKey = "X-Correlation-ID"
+
+var ignoredPaths = env.Get("LOGGER_HANDLERS_IGNORED_PATHS", []string{})
 
 // HTTPHandler is a logging middleware for http server
 // ordering multiple middlewares for http.Mux is important
@@ -24,6 +27,11 @@ const CorrelationIDHeaderKey = "X-Correlation-ID"
 //	http.ListenAndServe(addr, log.HTTPHandler(mux))
 func HTTPHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for i := range ignoredPaths {
+			if strings.Contains(r.URL.Path, ignoredPaths[i]) {
+				return
+			}
+		}
 		correlationID := r.Header.Get(CorrelationIDHeaderKey)
 		if correlationID == "" {
 			correlationID = fmt.Sprintf("unknown-%s", uuid.NewString())
