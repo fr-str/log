@@ -1,6 +1,7 @@
 package log
 
 import (
+	"encoding/json"
 	"log/slog"
 	"time"
 
@@ -63,4 +64,12 @@ func Uint[T constraints.Unsigned](key string, v T) Attr {
 // Err returns error Attr
 func Err(v error) Attr {
 	return Attr{Key: "error", Value: slog.StringValue(v.Error())}
+}
+
+func JSON(k string, v any) Attr {
+	b, err := json.MarshalIndent(v, "", " ")
+	if err != nil {
+		return Attr{Key: k, Value: slog.StringValue(err.Error())}
+	}
+	return Attr{Key: k, Value: slog.AnyValue(json.RawMessage(b))}
 }
