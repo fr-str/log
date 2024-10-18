@@ -3,6 +3,7 @@ package log
 import (
 	"encoding/json"
 	"log/slog"
+	"reflect"
 	"time"
 
 	"golang.org/x/exp/constraints"
@@ -66,7 +67,11 @@ func Err(v error) Attr {
 	return Attr{Key: "error", Value: slog.StringValue(v.Error())}
 }
 
-func JSON(k string, v any) Attr {
+func JSON(v any) Attr {
+	return NamedJSON(reflect.TypeOf(v).Name(), v)
+}
+
+func NamedJSON(k string, v any) Attr {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {
 		return Attr{Key: k, Value: slog.StringValue(err.Error())}
