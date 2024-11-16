@@ -41,8 +41,10 @@ func MetadataHandler(handler slog.Handler, cfg Config) *metadataHandler {
 }
 
 func (h *metadataHandler) Handle(ctx context.Context, r slog.Record) error {
-	attrs := []slog.Attr{
-		slog.String(string(CorrelationIdKey), h.getCorrelationId(ctx)),
+	attrs := []slog.Attr{}
+	cID := h.getCorrelationId(ctx)
+	if cID != "" {
+		attrs = append(attrs, slog.String(string(CorrelationIdKey), h.getCorrelationId(ctx)))
 	}
 
 	caller := h.getCaller(ctx)
@@ -61,7 +63,7 @@ func (h *metadataHandler) Handle(ctx context.Context, r slog.Record) error {
 func (h *metadataHandler) getCorrelationId(ctx context.Context) string {
 	correlationId, ok := ctx.Value(CorrelationIdKey).(string)
 	if !ok {
-		return "unknown"
+		return ""
 	}
 	return correlationId
 }
