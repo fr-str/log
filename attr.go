@@ -68,7 +68,12 @@ func Err(v error) Attr {
 }
 
 func JSON(v any) Attr {
-	return NamedJSON(reflect.TypeOf(v).Name(), v)
+	t := reflect.TypeOf(v)
+	if t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+
+	return NamedJSON(t.Name(), v)
 }
 
 func NamedJSON(k string, v any) Attr {

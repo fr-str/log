@@ -1,7 +1,9 @@
 package level
 
 import (
+	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 )
 
@@ -20,20 +22,32 @@ const (
 )
 
 func TextToSlog(level string) slog.Level {
+	var mod int
+	_, extra, found := strings.Cut(level, "-")
+	if found {
+		var err error
+		mod, err = strconv.Atoi(extra)
+		if err != nil {
+			fmt.Printf("\n%s\n", err)
+		}
+	}
+
+	var ret slog.Level
 	switch strings.ToLower(level)[0] {
 	case 't':
-		return Trace
+		ret = Trace
 	case 'd':
-		return slog.LevelDebug
+		ret = slog.LevelDebug
 	case 'i':
-		return slog.LevelInfo
+		ret = slog.LevelInfo
 	case 'w':
-		return slog.LevelWarn
+		ret = slog.LevelWarn
 	case 'e':
-		return slog.LevelError
+		ret = slog.LevelError
 	default:
-		return slog.LevelInfo
+		ret = slog.LevelInfo
 	}
+	return ret - slog.Level(mod)
 }
 
 func TextFromSlog(level slog.Level) string {
