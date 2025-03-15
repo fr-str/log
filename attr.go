@@ -64,6 +64,9 @@ func Uint[T constraints.Unsigned](key string, v T) Attr {
 
 // Err returns error Attr
 func Err(v error) Attr {
+	if v == nil {
+		return Attr{Key: "error", Value: slog.StringValue("<nil>")}
+	}
 	return Attr{Key: "error", Value: slog.StringValue(v.Error())}
 }
 
